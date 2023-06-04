@@ -1,0 +1,18 @@
+#ignore __pycache__ everywhere
+global-exclude __pycache__
+
+#ignore .pyc files everywhere
+global-exclude *.pyc
+
+#ignore .pyo files everywhere
+global-exclude *.pyo
+
+#ignore .pyd files everywhere
+global-exclude *.pyd
+
+#ignore .so files everywhere
+global-exclude *.so
+
+#ignore .env files everywhere
+global-exclude .env
+
