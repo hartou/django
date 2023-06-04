@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   web:
-    image: hartou/django-docker:0.1
+    image: hartou/django-docker:3.11-python3.18
     build: .
     command: python /code/manage.py runserver 0.0.0.0:8000
     volumes:
