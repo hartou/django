@@ -1,7 +1,6 @@
 Django, Docker, and PostgreSQL Tutorial
 =======================================
 
-
 In this tutorial we will create a new Django project using Docker and PostgreSQL. Django ships with built-in SQLite support but even for local development you are better off using a "real" database like PostgreSQL that matches what is in production.
 
 It's *possible* to run PostgreSQL locally using a tool like [Postgres.app](https://postgresapp.com/), however the preferred choice among many developers today is to use [Docker](https://www.docker.com/), a tool for creating isolated operating systems. The easiest way to think of it is as a large virtual environment that contains everything needed for our Django project: dependencies, database, caching services, and any other tools needed.
@@ -13,9 +12,9 @@ Install Docker
 
 The first step is to install the desktop Docker app for your local machine:
 
--   [Docker for Mac](https://docs.docker.com/docker-for-mac/install/)
--   [Docker for Windows](https://docs.docker.com/docker-for-windows/install/)
--   [Docker for Linux](https://docs.docker.com/install/)
+- [Docker for Mac](https://docs.docker.com/docker-for-mac/install/)
+- [Docker for Windows](https://docs.docker.com/docker-for-windows/install/)
+- [Docker for Linux](https://docs.docker.com/install/)
 
 The initial download of Docker might take some time to download. It is a big file. Feel free to stretch your legs at this point!
 
@@ -39,6 +38,7 @@ Hello from Docker!
 This message shows that your installation appears to be working correctly.
 
 To generate this message, Docker took the following steps:
+
  1. The Docker client contacted the Docker daemon.
  2. The Docker daemon pulled the "hello-world" image from the Docker Hub.
     (arm64v8)
@@ -51,10 +51,10 @@ To try something more ambitious, you can run an Ubuntu container with:
  $ docker run -it ubuntu bash
 
 Share images, automate workflows, and more with a free Docker ID:
- https://hub.docker.com/
+ <https://hub.docker.com/>
 
 For more examples and ideas, visit:
- https://docs.docker.com/get-started/
+ <https://docs.docker.com/get-started/>
 
 Docker is properly installed. We can proceed to configuring a local Django set up and then switch over to Docker and PostgreSQL.
 
@@ -64,22 +64,26 @@ Django Set Up
 The code for this project can live anywhere on your computer but the `Desktop` is an easy location for teaching purposes. On the command line navigate to the desktop and create a new directory called `django-docker`.
 
 # Windows
+
 $ cd onedrive\desktop
 $ mkdir django-docker
 
 # macOS
+
 $ cd ~/desktop/code
 $ mkdir django-docker
 
 We will follow the standard steps for creating a new Django project: make a dedicated virtual environment, activate it, and install Django.
 
 # Windows
+
 $ python -m venv .venv
 $ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 $ .venv\Scripts\Activate.ps1
 (.venv) $ python -m pip install django~=4.0.0
 
 # macOS
+
 $ python3 -m venv .venv
 $ source .venv/bin/activate
 (.venv) $ python3 -m pip install django~=4.0.0
@@ -135,30 +139,35 @@ For our Django project we need to create a custom image that contains Python but
 Use your text editor to create a new `Dockerfile` file in the project-level directory next to the `manage.py` file. Within it add the following code which we'll walk through line-by-line below.
 
 # Pull base image
+
 FROM python:3.10.2-slim-bullseye
 
 # Set environment variables
+
 ENV PIP_DISABLE_PIP_VERSION_CHECK 1
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 # Set work directory
+
 WORKDIR /code
 
 # Install dependencies
+
 COPY ./requirements.txt .
 RUN pip install -r requirements.txt
 
 # Copy project
+
 COPY . .
 
 `Dockerfile`s are read from top-to-bottom when an image is created. The first instruction is a `FROM` command that tells Docker what base image we would like to use for our application. Docker images can be inherited from other images so instead of creating our own base image, we'll use the official Python image that already has all the tools and packages that we need for our Django application. In this case we're using Python `3.10.2` and the much smaller in size `slim` variant that does not contain the common packages contained in the default tag. The tag `bullseye` refers to the latest stable Debian release. It is a good idea to set this explicitly to minimize potential breakage when there are new releases of Debian.
 
 Then we use the `ENV` command to set three environment variables:
 
--   `PIP_DISABLE_PIP_VERSION_CHECK` disables an automatic check for `pip` updates each time
--   `PYTHONDONTWRITEBYTECODE` means Python will not try to write `.pyc` files
--   `PYTHONUNBUFFERED` ensures our console output is not buffered by Docker
+- `PIP_DISABLE_PIP_VERSION_CHECK` disables an automatic check for `pip` updates each time
+- `PYTHONDONTWRITEBYTECODE` means Python will not try to write `.pyc` files
+- `PYTHONUNBUFFERED` ensures our console output is not buffered by Docker
 
 The command `WORKDIR` is used to set a default working directory when running the rest of our commands. This tells Docker to use this path as the default location for all subsequent commands. As a result, we can use relative paths based on the working directory rather than typing out the full file path each time. In our case the working directory is `/code` but it can often be much longer and something like `/app/src`, `/usr/src/app`, or similar variations depending upon the specific needs of a project.
 
@@ -199,10 +208,11 @@ services:
  web:
  build: .
  ports:
- - "8000:8000"
+
+- "8000:8000"
  command: python manage.py runserver 0.0.0.0:8000
  volumes:
- - .:/code
+- .:/code
 
 On the top line we set the [most recent version](https://docs.docker.com/compose/compose-file/compose-versioning/) of Docker Compose which is currently `3.9`. Then we specify which `services` (or containers) we want to have running within our Docker host. It's possible to have multiple `services` running, but for now we just have one for `web`.
 
@@ -222,7 +232,7 @@ docker-web-1  |
 docker-web-1  |  System  check  identified  no  issues  (0  silenced).
 docker-web-1  |  March  22,  2022  -  21:51:04
 docker-web-1  |  Django  version  4.0.4,  using  settings  'django_project.settings'
-docker-web-1  |  Starting  development  server  at  http://0.0.0.0:8000/
+docker-web-1  |  Starting  development  server  at  <http://0.0.0.0:8000/>
 docker-web-1  |  Quit  the  server  with  CONTROL-C.
 
 To confirm it actually worked, go back to `http://127.0.0.1:8000/` in your web browser. Refresh the page and the "Hello, World" page should still appear.
@@ -231,11 +241,11 @@ Django is now running purely within a Docker container. We are not working withi
 
 We will create multiple Docker images and containers over the course of this book and with practice the flow will start to make more sense.:
 
--   create a `Dockerfile` with custom image instructions
--   add a `.dockerignore` file
--   build the image
--   create a `docker-compose.yml` file
--   spin up the container(s)
+- create a `Dockerfile` with custom image instructions
+- add a `.dockerignore` file
+- build the image
+- create a `docker-compose.yml` file
+- spin up the container(s)
 
 Stop the currently running container with `Control+c` (press the "Control" and "c" button at the same time) and additionally type `docker-compose down`. Docker containers take up a lot of memory so it's a good idea to stop them when you're done using them. Containers are meant to be stateless which is why we use `volumes` to copy our code over locally where it can be saved.
 
@@ -276,11 +286,13 @@ Within the `db` service we specify which version of PostgreSQL to use. As of t
 
 Here is what the updated file looks like:
 
+```yaml
 version: "3.9"
 
 services:
   web:
     build: .
+    image: <yourregistryname>/django-docker:3.11.3-bullseye-slim
     command: python /code/manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/code
@@ -289,7 +301,7 @@ services:
     depends_on:
       - db
   db:
-    image: postgres:13
+    image: postgres:15.3-alpine3.18
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:
@@ -297,6 +309,7 @@ services:
 
 volumes:
   postgres_data:
+```
 
 DATABASES
 ---------
@@ -306,16 +319,21 @@ The third and final step is to update the `django_project/settings.py` file to
 By default Django specifies `sqlite3` as the database engine, gives it the name `db.sqlite3`, and places it at `BASE_DIR` which means in our project-level directory.
 
 # django_project/settings.py
+
+```python
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
+```
 
 To switch over to PostgreSQL we will update the [ENGINE](https://docs.djangoproject.com/en/4.0/ref/settings/#std:setting-DATABASE-ENGINE) configuration. PostgreSQL requires a `NAME`, `USER`, `PASSWORD`, `HOST`, and `PORT`. For convenience we'll set the first three to `postgres`, the `HOST` to `db` which is the name of our service set in `docker-compose.yml`, and the `PORT` to `5432` which is the default PostgreSQL [port](https://en.wikipedia.org/wiki/Port_%28computer_networking%29).
 
 # django_project/settings.py
+
+```python
 DATABASES = {
  "default": {
  "ENGINE": "django.db.backends.postgresql",
@@ -326,6 +344,7 @@ DATABASES = {
  "PORT": 5432,  # default postgres port
  }
 }
+```
 
 And that's it! We can build our new image containing `psycopg2-binary` and spin up the two containers in detached mode with the following single command:
 
@@ -350,10 +369,10 @@ Quick Review
 
 Here is a short version of the terms and concepts we've covered in this post:
 
--   Image: the "definition" of your project
--   Container: what your project actually runs in (an instance of the image)
--   Dockerfile: defines what your image looks like
--   docker-compose.yml: a [YAML](http://yaml.org/) file that takes the Dockerfile and adds additional instructions for how our Docker container should behave in production
+- Image: the "definition" of your project
+- Container: what your project actually runs in (an instance of the image)
+- Dockerfile: defines what your image looks like
+- docker-compose.yml: a [YAML](http://yaml.org/) file that takes the Dockerfile and adds additional instructions for how our Docker container should behave in production
 
 We use the `Dockerfile` to tell Docker how to build our *image*. Then we run our actual project within a *container*. The `docker-compose.yml` file provides additional information for how our Docker container should behave in production.
 
@@ -364,4 +383,5 @@ If you'd like to learn more about using Django, Docker, and PostgreSQL I've writ
 
 Reference
 ---------
--   [Django, Docker, and PostgreSQL Tutorial](https://learndjango.com/tutorials/django-docker-and-postgresql-tutorial)
+
+- [Django, Docker, and PostgreSQL Tutorial](https://learndjango.com/tutorials/django-docker-and-postgresql-tutorial)
