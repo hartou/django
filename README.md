@@ -292,7 +292,7 @@ version: "3.9"
 services:
   web:
     build: .
-    image: '<yourregistryname>/django-docker:3.11-python3.18'
+    image: <yourregistryname>/django-docker:3.11.3-bullseye-slim
     command: python /code/manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/code
@@ -301,7 +301,7 @@ services:
     depends_on:
       - db
   db:
-    image: postgres:13
+    image: postgres:15.3-alpine3.18
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:
@@ -333,6 +333,7 @@ To switch over to PostgreSQL we will update the [ENGINE](https://docs.djangopro
 
 # django_project/settings.py
 
+```python
 DATABASES = {
  "default": {
  "ENGINE": "django.db.backends.postgresql",
@@ -343,6 +344,7 @@ DATABASES = {
  "PORT": 5432,  # default postgres port
  }
 }
+```
 
 And that's it! We can build our new image containing `psycopg2-binary` and spin up the two containers in detached mode with the following single command:
 
